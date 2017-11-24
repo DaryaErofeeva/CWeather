@@ -1,24 +1,20 @@
 package com.ero.cweather.controllers;
 
-import com.ero.cweather.weather.weatherlibrary.datamodel.Location;
 import com.ero.cweather.weather.weatherlibrary.datamodel.WeatherModel;
 import com.ero.cweather.weather.weatherlibraryjava.IRepository;
 import com.ero.cweather.weather.weatherlibraryjava.Repository;
 import com.ero.cweather.weather.weatherlibraryjava.RequestBlocks;
 import com.jfoenix.controls.JFXMasonryPane;
 import com.jfoenix.effects.JFXDepthManager;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -67,6 +63,7 @@ public class MainController implements Initializable {
                                 + "\nAvg temp: " + weatherModel.getForecast().getForecastday().get(i).getDay().avgtemp_c
                                 + "\nMax temp: " + weatherModel.getForecast().getForecastday().get(i).getDay().maxtemp_c)
                 );
+
                 VBox.setVgrow(header, Priority.ALWAYS);
                 StackPane body = new StackPane();
                 body.setMinHeight(Math.random() * 20 + 50);
