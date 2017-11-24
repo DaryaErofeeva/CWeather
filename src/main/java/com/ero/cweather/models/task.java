@@ -54,7 +54,7 @@ public class task {
         this.max_wind_speed = max_wind_speed;
     }
 
-    public boolean isIs_cloudly() {
+    public boolean getIs_cloudly() {
         return is_cloudly;
     }
 
@@ -70,7 +70,7 @@ public class task {
         this.is_raining = is_raining;
     }
 
-    public boolean isIs_finished() {
+    public boolean getIs_finished() {
         return is_finished;
     }
 
@@ -84,5 +84,20 @@ public class task {
 
     public void setDuration(int duration) {
         this.duration = duration;
+    }
+
+    @Override
+    public String toString() {
+        return "task{" +
+                "title='" + title + '\'' +
+                ", min_temp=" + min_temp +
+                ", max_temp=" + max_temp +
+                ", min_wind_speed=" + min_wind_speed +
+                ", max_wind_speed=" + max_wind_speed +
+                ", is_cloudly=" + is_cloudly +
+                ", is_raining=" + is_raining +
+                ", is_finished=" + is_finished +
+                ", duration=" + duration +
+                '}';
     }
 }
