@@ -4,3 +4,7 @@
 target/
 src/main/resources/images/
 src/test/
+
+*.iml
+
+libs/
