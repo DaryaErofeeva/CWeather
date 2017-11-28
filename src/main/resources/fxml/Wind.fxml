@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.*?>
+<?import com.jfoenix.controls.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.control.*?>
+<?import com.jfoenix.validation.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="250.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label layoutX="10.0" layoutY="10.0" text="Минимальная&#10;скорость ветра" textAlignment="CENTER" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0">
+         <font>
+            <Font name="Century Gothic" size="14.0" />
+         </font>
+      </Label>
+      <JFXSlider blockIncrement="1.0" layoutX="10.0" layoutY="10.0" max="20.0" orientation="VERTICAL" value="10.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="50.0" AnchorPane.topAnchor="10.0" />
+      <Label layoutX="10.0" layoutY="10.0" text="Максимальная&#10;скорость ветра" textAlignment="CENTER" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0">
+         <font>
+            <Font name="Century Gothic" size="14.0" />
+         </font>
+      </Label>
+      <JFXSlider blockIncrement="1.0" layoutX="90.0" layoutY="89.0" max="20.0" orientation="VERTICAL" value="10.0" AnchorPane.bottomAnchor="50.0" AnchorPane.rightAnchor="55.0" AnchorPane.topAnchor="10.0" />
+   </children>
+</AnchorPane>

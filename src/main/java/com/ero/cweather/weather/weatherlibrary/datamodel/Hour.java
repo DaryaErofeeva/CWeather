@@ -30,7 +30,7 @@ public class Hour implements Serializable{
 	public String time;
 	
 	@SerializedName("wind_dir")
-	String wind_dir;
+	public String wind_dir;
 	
 	@SerializedName("temp_c")
 	public double temp_c;
