@@ -6,6 +6,7 @@ src/main/resources/images/
 src/test/
 
 *.iml
+*.jar
 
 libs/
 bin/
