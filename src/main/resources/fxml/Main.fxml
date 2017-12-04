@@ -1,11 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import com.jfoenix.controls.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <?import com.jfoenix.controls.JFXMasonryPane?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.StackPane?>
-<StackPane fx:id="root" xmlns:fx="http://javafx.com/fxml/1"
-           xmlns="http://javafx.com/javafx/2.2" fx:controller="com.ero.cweather.controllers.MainController">
-    <ScrollPane fitToHeight="true" fitToWidth="true" fx:id="scrollPane" hbarPolicy="NEVER">
-        <JFXMasonryPane fx:id="masonryPane"/>
-    </ScrollPane>
+
+<StackPane fx:id="root" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ero.cweather.controllers.MainController">
+   <children>
+       <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER">
+          <content>
+              <JFXMasonryPane fx:id="masonryPane" />
+          </content>
+       </ScrollPane>
+      <JFXButton fx:id="addTask" onAction="#addTask" text="+" textFill="#0a0a0a" StackPane.alignment="BOTTOM_RIGHT">
+         <font>
+            <Font name="Ayuthaya" size="20.0" />
+         </font>
+         <StackPane.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </StackPane.margin>
+      </JFXButton>
+   </children>
 </StackPane>
