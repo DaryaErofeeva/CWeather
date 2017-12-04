@@ -1,4 +1,4 @@
-package ip;
+package com.ero.cweather.ip;
 
 import java.io.BufferedReader;
 import java.io.IOException;
