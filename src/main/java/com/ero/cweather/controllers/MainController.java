@@ -1,13 +1,11 @@
 package com.ero.cweather.controllers;
 
-import com.ero.cweather.db.WeatherDAO;
 import com.ero.cweather.db.collections.WeatherCollection;
 import com.ero.cweather.models.Weather;
 import com.ero.cweather.weather.WeatherSearcher;
 import com.jfoenix.controls.JFXMasonryPane;
 import com.jfoenix.effects.JFXDepthManager;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -19,7 +17,6 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -29,7 +26,6 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 
 public class MainController implements Initializable {
@@ -71,7 +67,7 @@ public class MainController implements Initializable {
     }
 
     private static void fillData() {
-        weatherCollection.fillWaybillList();
+        weatherCollection.fillWeatherList();
     }
 
 
