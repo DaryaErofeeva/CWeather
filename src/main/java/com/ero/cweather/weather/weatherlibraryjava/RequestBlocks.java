@@ -92,7 +92,7 @@ public class RequestBlocks {
         }
 
         public static String AutoIP() {
-            return "q=auto:ip";
+            return "q=auto:com.ero.cweather.ip";
         }
 
         public static String IPAddress(String IP) {

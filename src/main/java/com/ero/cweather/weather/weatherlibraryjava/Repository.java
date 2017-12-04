@@ -63,7 +63,7 @@ public class Repository implements IRepository {
 
     //endregion
 
-    //region Get Weather Current Data
+    //region Get WeatherSearcher Current Data
 
     @Override
     public WeatherModel GetWeatherData(String key, RequestBlocks.GetBy getBy, String value) throws Exception {
@@ -106,8 +106,8 @@ public class Repository implements IRepository {
     //endregion
 
     private WeatherModel GetData(String url) {
-//		getWeatherList task = new getWeatherList();
-//		task.execute();
+//		getWeatherList WeatherSearcher = new getWeatherList();
+//		WeatherSearcher.execute();
 
         URL obj;
         try {
