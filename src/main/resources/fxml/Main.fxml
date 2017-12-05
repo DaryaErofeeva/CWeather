@@ -17,7 +17,7 @@
               <JFXMasonryPane fx:id="masonryPane" />
           </content>
        </ScrollPane>
-      <JFXButton fx:id="addTask" onAction="#addTask" text="+" textFill="#0a0a0a" StackPane.alignment="BOTTOM_RIGHT">
+      <JFXButton fx:id="addTask" onAction="#onAddButtonActionListener" text="+" textFill="#0a0a0a" StackPane.alignment="BOTTOM_RIGHT">
          <font>
             <Font name="Ayuthaya" size="20.0" />
          </font>
