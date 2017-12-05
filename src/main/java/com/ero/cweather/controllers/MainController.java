@@ -5,6 +5,7 @@ import com.ero.cweather.models.Weather;
 import com.ero.cweather.weather.WeatherSearcher;
 import com.jfoenix.controls.JFXMasonryPane;
 import com.jfoenix.effects.JFXDepthManager;
+import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -13,10 +14,7 @@ import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -34,20 +32,25 @@ public class MainController implements Initializable {
     @FXML
     private JFXMasonryPane masonryPane;
 
+    private ArrayList<Node> children;
+
     private FXMLLoader fxmlLoader = new FXMLLoader();
     private Stage mainStage;
 
     private FXMLLoader fxmlLoaderTitle = new FXMLLoader();
     private Parent fxmlTitle;
     private Stage titleStage;
+    private TitleController titleController;
 
     private FXMLLoader fxmlLoaderTemperature = new FXMLLoader();
     private Parent fxmlTemperature;
     private Stage temperatureStage;
+    private TemperatureController temperatureController;
 
     private FXMLLoader fxmlLoaderWind = new FXMLLoader();
     private Parent fxmlWind;
     private Stage windStage;
+    private WindController windController;
 
     private static WeatherCollection weatherCollection;
 
@@ -60,10 +63,32 @@ public class MainController implements Initializable {
         fxmlLoader.setLocation(getClass().getClassLoader().getResource("fxml/Main.fxml"));
         fxmlLoader.setResources(resources);
 
+        initLoader();
+
         weatherCollection = new WeatherCollection();
+        weatherCollection.getWeatherObservableList().addListener((ListChangeListener<Weather>) c -> init());
         fillData();
 
         init();
+    }
+
+    private void initLoader() {
+        try {
+            fxmlLoaderTitle.setLocation(getClass().getResource("/fxml/Title.fxml"));
+            fxmlTitle = fxmlLoaderTitle.load();
+            titleController = fxmlLoaderTitle.getController();
+
+            fxmlLoaderTemperature.setLocation(getClass().getResource("/fxml/Temperature.fxml"));
+            fxmlTemperature = fxmlLoaderTemperature.load();
+            temperatureController = fxmlLoaderTemperature.getController();
+
+            fxmlLoaderWind.setLocation(getClass().getResource("/fxml/Wind.fxml"));
+            fxmlWind = fxmlLoaderWind.load();
+            windController = fxmlLoaderWind.getController();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private static void fillData() {
@@ -72,14 +97,9 @@ public class MainController implements Initializable {
 
 
     private void init() {
-        ArrayList<Node> children = new ArrayList<>();
+        children = new ArrayList<>();
         for (Weather weather : weatherCollection.getWeatherObservableList()) {
             StackPane child = new StackPane();
-            double width = 200;
-            double height = 200;
-            child.setMinSize(width, height);
-            child.setMaxSize(width, height);
-            child.setPrefSize(width, height);
 
             JFXDepthManager.setDepth(child, 1);
             children.add(child);
@@ -105,26 +125,32 @@ public class MainController implements Initializable {
 
             setContextMenu(child);
         }
-        masonryPane.getChildren().addAll(children);
+        masonryPane.getChildren().setAll(children);
     }
 
     private void setContextMenu(Node node) {
         MenuItem titleItem = new MenuItem("Имя задачи");
-        titleItem.setOnAction(event -> showTitleWindow());
+        titleItem.setOnAction(event -> showTitleWindow(node));
 
         MenuItem temperatureItem = new MenuItem("Температура");
-        temperatureItem.setOnAction(event -> showTemperatureWindow());
+        temperatureItem.setOnAction(event -> showTemperatureWindow(node));
 
         MenuItem windItem = new MenuItem("Скорость ветра");
-        windItem.setOnAction(event -> showWindWindow());
+        windItem.setOnAction(event -> showWindWindow(node));
+
+        MenuItem removeTask = new MenuItem("Удалить");
+        removeTask.setOnAction(event -> weatherCollection.delete(weatherCollection.getWeatherObservableList()
+                .get(children.indexOf(node))));
 
         ContextMenu contextMenu = new ContextMenu(
                 titleItem,
                 temperatureItem,
-                windItem
+                windItem,
+                new SeparatorMenuItem(),
+                removeTask
         );
 
-        node.setOnContextMenuRequested(event -> contextMenu.show(node, Side.TOP, 0, 90));
+        node.setOnContextMenuRequested(event -> contextMenu.show(node, Side.TOP, 0, 120));
     }
 
     private String getDefaultColor(int i) {
@@ -175,58 +201,63 @@ public class MainController implements Initializable {
         return color;
     }
 
-    public void addTask(ActionEvent actionEvent) {
+    public void onAddButtonActionListener(ActionEvent actionEvent) {
+        titleController.setWeather(new Weather());
         showTitleWindow();
+        if (titleController.isSubmitted())
+            weatherCollection.add(titleController.getWeather());
     }
 
-    private void showTitleWindow(){
-        try {
-            if (titleStage == null) {
-                fxmlLoaderTitle.setLocation(getClass().getResource("/fxml/Title.fxml"));
-                fxmlTitle = fxmlLoaderTitle.load();
-                titleStage = new Stage();
-                titleStage.setScene(new Scene(fxmlTitle));
-                titleStage.setResizable(false);
-                titleStage.initModality(Modality.WINDOW_MODAL);
-                titleStage.initOwner(mainStage);
-            }
-            titleStage.showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private void showTitleWindow(Node node) {
+        titleController.setWeather(weatherCollection.getWeatherObservableList()
+                .get(children.indexOf(node)));
+        showTitleWindow();
+        if (titleController.isSubmitted())
+            weatherCollection.edit(titleController.getWeather());
     }
 
-    private void showTemperatureWindow(){
-        try {
-            if (temperatureStage == null) {
-                fxmlLoaderTemperature.setLocation(getClass().getResource("/fxml/Temperature.fxml"));
-                fxmlTemperature = fxmlLoaderTemperature.load();
-                temperatureStage = new Stage();
-                temperatureStage.setScene(new Scene(fxmlTemperature));
-                temperatureStage.setResizable(false);
-                temperatureStage.initModality(Modality.WINDOW_MODAL);
-                temperatureStage.initOwner(mainStage);
-            }
-            temperatureStage.showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
+    private void showTitleWindow() {
+        if (titleStage == null) {
+            titleStage = new Stage();
+            titleStage.setScene(new Scene(fxmlTitle));
+            titleStage.setResizable(false);
+            titleStage.initModality(Modality.WINDOW_MODAL);
+            titleStage.initOwner(mainStage);
         }
+        titleStage.showAndWait();
     }
 
-    private void showWindWindow(){
-        try {
-            if (windStage == null) {
-                fxmlLoaderWind.setLocation(getClass().getResource("/fxml/Wind.fxml"));
-                fxmlWind = fxmlLoaderWind.load();
-                windStage = new Stage();
-                windStage.setScene(new Scene(fxmlWind));
-                windStage.setResizable(false);
-                windStage.initModality(Modality.WINDOW_MODAL);
-                windStage.initOwner(mainStage);
-            }
-            windStage.showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
+    private void showTemperatureWindow(Node node) {
+        temperatureController.setWeather(weatherCollection.getWeatherObservableList()
+                .get(children.indexOf(node)));
+
+        if (temperatureStage == null) {
+            temperatureStage = new Stage();
+            temperatureStage.setScene(new Scene(fxmlTemperature));
+            temperatureStage.setResizable(false);
+            temperatureStage.initModality(Modality.WINDOW_MODAL);
+            temperatureStage.initOwner(mainStage);
         }
+        temperatureStage.showAndWait();
+
+        if (temperatureController.isSubmitted())
+            weatherCollection.edit(temperatureController.getWeather());
+    }
+
+    private void showWindWindow(Node node) {
+        windController.setWeather(weatherCollection.getWeatherObservableList()
+                .get(children.indexOf(node)));
+
+        if (windStage == null) {
+            windStage = new Stage();
+            windStage.setScene(new Scene(fxmlWind));
+            windStage.setResizable(false);
+            windStage.initModality(Modality.WINDOW_MODAL);
+            windStage.initOwner(mainStage);
+        }
+        windStage.showAndWait();
+
+        if (windController.isSubmitted())
+            weatherCollection.edit(windController.getWeather());
     }
 }
