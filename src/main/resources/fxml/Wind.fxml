@@ -17,9 +17,9 @@
     <children>
         <JFXSlider layoutX="10.0" layoutY="10.0" max="20.0" value="10.0"
                    AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0"
-                   AnchorPane.topAnchor="10.0"/>
-        <JFXButton text="Отмена" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="50.0"/>
+                   AnchorPane.topAnchor="10.0" fx:id="sldrWind"/>
+        <JFXButton text="Отмена" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="50.0" cancelButton="true" onAction="#onCancelActionListener"/>
         <JFXButton layoutX="71.0" layoutY="70.0" text="OK" AnchorPane.bottomAnchor="10.0"
-                   AnchorPane.rightAnchor="10.0"/>
+                   AnchorPane.rightAnchor="10.0" defaultButton="true" onAction="#onOKActionListener"/>
     </children>
 </AnchorPane>
