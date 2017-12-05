@@ -1,5 +1,7 @@
 package com.ero.cweather.models;
 
+import javafx.beans.property.SimpleStringProperty;
+
 public class Weather {
     private String title;
     private Double temp;
@@ -9,6 +11,7 @@ public class Weather {
     private Boolean snowing;
     private Boolean finished;
     private Integer duration;
+    private String objectId;
 
     public String getTitle() {
         return title;
@@ -72,6 +75,14 @@ public class Weather {
 
     public void setDuration(int duration) {
         this.duration = duration;
+    }
+
+    public String getObjectId() {
+        return objectId;
+    }
+
+    public void setObjectId(String objectId) {
+        this.objectId = objectId;
     }
 
     @Override
