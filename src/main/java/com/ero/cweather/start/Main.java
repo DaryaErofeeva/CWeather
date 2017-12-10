@@ -19,7 +19,9 @@ public class Main extends Application {
         MainController mainController = fxmlLoader.getController();
         mainController.setMainStage(stage);
 
-        stage.setScene(new Scene(fxmlMain, 300, 300));
+        stage.setScene(new Scene(fxmlMain));
+        stage.setMinWidth(320);
+        stage.setMinHeight(315);
         stage.show();
     }
 
