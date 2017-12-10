@@ -1,6 +1,9 @@
 package com.ero.cweather.start;
 
 import com.ero.cweather.controllers.MainController;
+import com.ero.cweather.db.WeatherDAO;
+import com.ero.cweather.db.collections.WeatherCollection;
+import com.ero.cweather.models.Weather;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;

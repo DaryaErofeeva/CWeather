@@ -14,9 +14,9 @@ public class WeatherDAO {
         Backendless.Persistence.of(Weather.class).save(weather);
     }
 
-    public static void update(Weather Weather) {
+    public static void update(Weather weather) {
         Backendless.initApp(APPLICATION_ID, SECRET_KEY);
-        Backendless.Persistence.of(Weather.class).save(Weather);
+        Backendless.Persistence.of(Weather.class).save(weather);
     }
 
     public static List<Weather> selectAll() {

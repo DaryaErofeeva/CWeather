@@ -22,13 +22,13 @@ public class WeatherSearcher {
         try {
             WeatherModel weatherModel = repo.GetWeatherData(KEY, RequestBlocks.GetBy.IPAddress, Address.getIPAddress(), RequestBlocks.Days.Ten);
             for (Forecastday f : weatherModel.getForecast().getForecastday()) {
-                if (Weather.getTemp() != null && (Weather.getTemp() > f.getDay().maxtemp_c || Weather.getTemp() < f.getDay().mintemp_c))
+                if (Weather.temp != null && (Weather.temp > f.getDay().maxtemp_c || Weather.temp < f.getDay().mintemp_c))
                     continue;
-                if (Weather.getWindSpeed() != null && Weather.getWindSpeed() > f.getDay().maxwind_kph)
+                if (Weather.wind_speed != null && Weather.wind_speed > f.getDay().maxwind_kph)
                     continue;
-                if (Weather.isRaining() != null && Weather.isRaining() != getWillItRain(f.getHour()))
+                if (Weather.raining != null && Weather.raining != getWillItRain(f.getHour()))
                     continue;
-                if (Weather.isSnowing() != null && Weather.isSnowing() != getWillItSnow(f.getHour()))
+                if (Weather.snowing != null && Weather.snowing != getWillItSnow(f.getHour()))
                     continue;
                 dates.add(f.date);
             }

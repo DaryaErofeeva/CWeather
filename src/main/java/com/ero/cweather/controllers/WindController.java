@@ -15,7 +15,7 @@ public class WindController {
     private boolean submitted;
 
     public void onOKActionListener(ActionEvent actionEvent) {
-        weather.setWindSpeed(sldrWind.getValue());
+        weather.wind_speed = sldrWind.getValue();
         submitted = true;
         onCancelActionListener(actionEvent);
     }
@@ -27,8 +27,8 @@ public class WindController {
     public void setWeather(Weather weather) {
         this.weather = weather;
 
-        if (weather.getWindSpeed() != null)
-            sldrWind.setValue(weather.getWindSpeed());
+        if (weather.wind_speed != null)
+            sldrWind.setValue(weather.wind_speed);
 
         submitted = false;
     }

@@ -16,7 +16,7 @@ public class TitleController {
     private boolean submitted;
 
     public void onOKActionListener(ActionEvent actionEvent) {
-        weather.setTitle(txtTitle.getText());
+        weather.title = txtTitle.getText();
         submitted = true;
         onCancelActionListener(actionEvent);
     }
@@ -27,7 +27,7 @@ public class TitleController {
 
     public void setWeather(Weather weather) {
         this.weather = weather;
-        txtTitle.setText(weather.getTitle());
+        txtTitle.setText(weather.title);
 
         submitted = false;
     }

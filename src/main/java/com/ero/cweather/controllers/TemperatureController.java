@@ -16,7 +16,7 @@ public class TemperatureController {
     private boolean submitted;
 
     public void onOKActionListener(ActionEvent actionEvent) {
-        weather.setTemp(sldrTemperature.getValue());
+        weather.temp = sldrTemperature.getValue();
         submitted = true;
         onCancelActionListener(actionEvent);
     }
@@ -28,8 +28,8 @@ public class TemperatureController {
     public void setWeather(Weather weather) {
         this.weather = weather;
 
-        if (weather.getTemp() != null)
-            sldrTemperature.setValue(weather.getTemp());
+        if (weather.temp != null)
+            sldrTemperature.setValue(weather.temp);
 
         submitted = false;
     }

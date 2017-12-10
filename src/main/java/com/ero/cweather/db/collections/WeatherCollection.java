@@ -14,11 +14,12 @@ public class WeatherCollection {
 
     public void add(Weather weather) {
         WeatherDAO.insert(weather);
-        weatherObservableList.add(weather);
+        fillWeatherList();
     }
 
     public void edit(Weather weather) {
         WeatherDAO.update(weather);
+        fillWeatherList();
     }
 
     public void delete(Weather weather) {
