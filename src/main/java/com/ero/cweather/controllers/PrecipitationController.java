@@ -20,6 +20,7 @@ public class PrecipitationController {
     public void onOKActionListener(ActionEvent actionEvent) {
         weather.raining = tbtnRain.isSelected();
         weather.snowing = tbtnSnow.isSelected();
+
         submitted = true;
         onCancelActionListener(actionEvent);
     }
@@ -30,6 +31,7 @@ public class PrecipitationController {
 
     public void setWeather(Weather weather) {
         this.weather = weather;
+
         tbtnRain.setSelected(weather.raining == null ? false : weather.raining);
         tbtnSnow.setSelected(weather.snowing == null ? false : weather.snowing);
 

@@ -1,25 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.text.*?>
-<?import javafx.scene.chart.*?>
-<?import javafx.scene.*?>
-<?import com.jfoenix.controls.*?>
-<?import javafx.scene.shape.*?>
-<?import javafx.scene.control.*?>
-<?import com.jfoenix.validation.*?>
-<?import java.lang.*?>
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXCheckBox?>
+<?import com.jfoenix.controls.JFXSlider?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.layout.*?>
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="120.0"
-            prefWidth="350.0" xmlns="http://javafx.com/javafx/8"
-            fx:controller="com.ero.cweather.controllers.WindController"
-            xmlns:fx="http://javafx.com/fxml/1">
+<?import javafx.scene.text.Font?>
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="130.0"
+            prefWidth="350.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.ero.cweather.controllers.WindController">
     <children>
-        <JFXSlider layoutX="10.0" layoutY="10.0" max="20.0" value="10.0"
-                   AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0"
-                   AnchorPane.topAnchor="10.0" fx:id="sldrWind"/>
-        <JFXButton text="Отмена" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="50.0" cancelButton="true" onAction="#onCancelActionListener"/>
-        <JFXButton layoutX="71.0" layoutY="70.0" text="OK" AnchorPane.bottomAnchor="10.0"
-                   AnchorPane.rightAnchor="10.0" defaultButton="true" onAction="#onOKActionListener"/>
+        <JFXSlider fx:id="sldrWind" layoutX="10.0" layoutY="10.0" majorTickUnit="5.0" max="20.0" showTickLabels="true"
+                   showTickMarks="true" value="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0"
+                   AnchorPane.topAnchor="50.0">
+            <cursor>
+                <Cursor fx:constant="DEFAULT"/>
+            </cursor>
+        </JFXSlider>
+        <JFXButton cancelButton="true" onAction="#onCancelActionListener" text="Отмена" AnchorPane.bottomAnchor="10.0"
+                   AnchorPane.rightAnchor="50.0"/>
+        <JFXButton defaultButton="true" layoutX="71.0" layoutY="70.0" onAction="#onOKActionListener" text="OK"
+                   AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0"/>
+        <JFXCheckBox text="Не учитывать" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="10.0" fx:id="chckbxNull"
+                     onAction="#onNullChecked">
+            <font>
+                <Font name="Ayuthaya" size="14.0"/>
+            </font>
+        </JFXCheckBox>
     </children>
 </AnchorPane>

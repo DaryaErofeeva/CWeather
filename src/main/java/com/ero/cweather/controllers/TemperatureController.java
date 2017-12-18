@@ -1,8 +1,8 @@
 package com.ero.cweather.controllers;
 
 import com.ero.cweather.models.Weather;
+import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXSlider;
-import com.jfoenix.controls.JFXTextField;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -12,11 +12,14 @@ public class TemperatureController {
     @FXML
     public JFXSlider sldrTemperature;
 
+    @FXML
+    public JFXCheckBox chckbxNull;
+
     private Weather weather;
     private boolean submitted;
 
     public void onOKActionListener(ActionEvent actionEvent) {
-        weather.temp = sldrTemperature.getValue();
+        if (!chckbxNull.isSelected()) weather.temp = sldrTemperature.getValue();
         submitted = true;
         onCancelActionListener(actionEvent);
     }
@@ -28,8 +31,10 @@ public class TemperatureController {
     public void setWeather(Weather weather) {
         this.weather = weather;
 
-        if (weather.temp != null)
+        if (weather.temp != -60.0) {
             sldrTemperature.setValue(weather.temp);
+            chckbxNull.setSelected(false);
+        } else chckbxNull.setSelected(true);
 
         submitted = false;
     }
@@ -42,5 +47,9 @@ public class TemperatureController {
         Node node = (Node) actionEvent.getSource();
         Stage stage = (Stage) node.getScene().getWindow();
         stage.hide();
+    }
+
+    public void onNullChecked(ActionEvent actionEvent) {
+        weather.temp = -60.0;
     }
 }
