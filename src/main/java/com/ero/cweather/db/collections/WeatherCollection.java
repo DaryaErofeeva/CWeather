@@ -12,19 +12,24 @@ public class WeatherCollection {
         weatherObservableList = FXCollections.observableArrayList();
     }
 
-    public void add(Weather weather) {
-        WeatherDAO.insert(weather);
-        fillWeatherList();
+    public Weather add(Weather weather) {
+        weather = WeatherDAO.insert(weather);
+        weatherObservableList.add(weather);
+        return weather;
     }
 
-    public void edit(Weather weather) {
-        WeatherDAO.update(weather);
-        fillWeatherList();
+    public Weather edit(Weather weather) {
+        int index = weatherObservableList.indexOf(weather);
+        weather = WeatherDAO.update(weather);
+        weatherObservableList.set(index, weather);
+        return weather;
     }
 
-    public void delete(Weather weather) {
+    public int delete(Weather weather) {
+        int index = weatherObservableList.indexOf(weather);
         WeatherDAO.drop(weather);
         weatherObservableList.remove(weather);
+        return index;
     }
 
     public ObservableList<Weather> getWeatherObservableList() {

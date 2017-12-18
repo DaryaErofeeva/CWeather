@@ -4,22 +4,23 @@ import com.ero.cweather.db.collections.WeatherCollection;
 import com.ero.cweather.models.Weather;
 import com.ero.cweather.weather.WeatherSearcher;
 import com.jfoenix.controls.JFXCheckBox;
-import com.jfoenix.controls.JFXMasonryPane;
-import com.jfoenix.effects.JFXDepthManager;
-import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.Priority;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -27,16 +28,16 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class MainController implements Initializable {
     @FXML
-    private ScrollPane scrollPane;
+    FlowPane flowPane;
 
     @FXML
     private JFXCheckBox chckbxFinished;
 
-    private JFXMasonryPane masonryPane;
     private ArrayList<Node> children;
 
     private FXMLLoader fxmlLoader = new FXMLLoader();
@@ -62,6 +63,11 @@ public class MainController implements Initializable {
     private Stage precipitationStage;
     private PrecipitationController precipitationController;
 
+    private FXMLLoader fxmlLoaderDates = new FXMLLoader();
+    private Parent fxmlDates;
+    private Stage datesStage;
+    private DatesController datesController;
+
     private static WeatherCollection weatherCollection;
 
     private boolean showFinished;
@@ -75,13 +81,13 @@ public class MainController implements Initializable {
         fxmlLoader.setLocation(getClass().getClassLoader().getResource("fxml/Main.fxml"));
         fxmlLoader.setResources(resources);
 
-        showFinished = true;
-
         initLoader();
 
         weatherCollection = new WeatherCollection();
-        weatherCollection.getWeatherObservableList().addListener((ListChangeListener<Weather>) c -> init());
+
+        showFinished = true;
         fillData();
+        init();
     }
 
     private void initLoader() {
@@ -101,6 +107,10 @@ public class MainController implements Initializable {
             fxmlLoaderPrecipitation.setLocation(getClass().getResource("/fxml/Precipitation.fxml"));
             fxmlPrecipitation = fxmlLoaderPrecipitation.load();
             precipitationController = fxmlLoaderPrecipitation.getController();
+
+            fxmlLoaderDates.setLocation(getClass().getResource("/fxml/Dates.fxml"));
+            fxmlDates = fxmlLoaderDates.load();
+            datesController = fxmlLoaderDates.getController();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -121,38 +131,51 @@ public class MainController implements Initializable {
             for (Weather weather : weatherCollection.getWeatherObservableList())
                 if (!weather.finished) children.add(createChild(weather));
 
-        masonryPane = new JFXMasonryPane();
-        masonryPane.getChildren().setAll(children);
-        scrollPane.setContent(masonryPane);
+        flowPane.getChildren().setAll(children);
     }
 
     private Node createChild(Weather weather) {
-        StackPane child = new StackPane();
-
-        JFXDepthManager.setDepth(child, 1);
+        VBox child = new VBox();
 
         // create content
-        StackPane header = new StackPane();
+        VBox header = new VBox();
         String headerColor = getDefaultColor(weatherCollection.getWeatherObservableList().indexOf(weather));
         header.setStyle("-fx-background-color: " + headerColor);
+        header.setPrefSize(250, 180);
+        header.setAlignment(Pos.CENTER);
 
-        Label datesLabel = new Label();
-        for (String date : WeatherSearcher.getDates(weather))
-            datesLabel.setText(datesLabel.getText() + date + "\n");
-        datesLabel.setFont(Font.font("Ayuthaya", 14));
-        datesLabel.setPadding(new Insets(10, 10, 10, 10));
-        header.getChildren().add(datesLabel);
+        int pt = 30;
+        List<String> dates = WeatherSearcher.getDates(weather);
+        for (String date : dates) {
+            if (pt == 0) break;
+            Label datesLabel = new Label(date);
+            datesLabel.setFont(Font.font("Ayuthaya", pt));
+            datesLabel.setTextFill(Color.WHITE);
+            header.getChildren().add(datesLabel);
+            pt -= 10;
+        }
+        if (dates.size() > 3) {
+            Label datesLabel = new Label("...");
+            datesLabel.setFont(Font.font("Ayuthaya", 10));
+            datesLabel.setTextFill(Color.WHITE);
+            header.getChildren().add(datesLabel);
+        }
 
-        VBox.setVgrow(header, Priority.ALWAYS);
-        StackPane body = new StackPane();
-        body.setMinHeight(Math.random() * 20 + 50);
-        Label titleLable = new Label(weather.title);
-        titleLable.setFont(Font.font("Ayuthaya", 14));
-        body.getChildren().add(titleLable);
-        VBox content = new VBox();
-        content.getChildren().addAll(header, body);
-        body.setStyle("-fx-background-color: rgb(255,255,255,0.87);");
-        child.getChildren().add(content);
+
+        StackPane footer = new StackPane();
+        footer.setStyle("-fx-background-color: white");
+        footer.setPrefSize(250, 70);
+
+        Label titleLabel = new Label(weather.title);
+        titleLabel.setTextFill(Color.web(headerColor));
+        titleLabel.setFont(Font.font("Ayuthaya", 20));
+        footer.getChildren().add(titleLabel);
+
+        child.getChildren().addAll(header, footer);
+
+        child.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2 && dates.size() > 3) showDatesWindow(dates);
+        });
 
         setContextMenu(child, weather.finished);
         return child;
@@ -160,23 +183,25 @@ public class MainController implements Initializable {
 
     private void setContextMenu(Node node, boolean isFinished) {
         MenuItem titleItem = new MenuItem("Имя задачи");
-        titleItem.setOnAction(event -> showTitleWindow(node));
+        titleItem.setOnAction(event -> showTitleWindow(node, children.indexOf(node)));
 
         MenuItem temperatureItem = new MenuItem("Температура");
-        temperatureItem.setOnAction(event -> showTemperatureWindow(node));
+        temperatureItem.setOnAction(event -> showTemperatureWindow(node, children.indexOf(node)));
 
         MenuItem windItem = new MenuItem("Скорость ветра");
-        windItem.setOnAction(event -> showWindWindow(node));
+        windItem.setOnAction(event -> showWindWindow(node, children.indexOf(node)));
 
         MenuItem precipitationItem = new MenuItem("Осадки");
-        precipitationItem.setOnAction(event -> showPrecipitationWindow(node));
+        precipitationItem.setOnAction(event -> showPrecipitationWindow(node, children.indexOf(node)));
 
         MenuItem finishItem = new MenuItem(isFinished ? "Открыть задачу" : "Закрыть задачу");
-        finishItem.setOnAction(event -> setFinishedValue(node));
+        finishItem.setOnAction(event -> setFinishedValue(node, children.indexOf(node)));
 
         MenuItem removeTask = new MenuItem("Удалить");
-        removeTask.setOnAction(event -> weatherCollection.delete(weatherCollection.getWeatherObservableList()
-                .remove(children.indexOf(node))));
+        removeTask.setOnAction(event -> deleteWeather(
+                weatherCollection.getWeatherObservableList().get(children.indexOf(node)),
+                children.indexOf(node))
+        );
 
         ContextMenu contextMenu = new ContextMenu(
                 titleItem,
@@ -243,15 +268,15 @@ public class MainController implements Initializable {
         titleController.setWeather(new Weather());
         showTitleWindow();
         if (titleController.isSubmitted())
-            weatherCollection.add(titleController.getWeather());
+            addWeather(titleController.getWeather());
     }
 
-    private void showTitleWindow(Node node) {
+    private void showTitleWindow(Node node, int index) {
         titleController.setWeather(weatherCollection.getWeatherObservableList()
                 .get(children.indexOf(node)));
         showTitleWindow();
         if (titleController.isSubmitted())
-            weatherCollection.edit(titleController.getWeather());
+            editWeather(titleController.getWeather(), index);
     }
 
     private void showTitleWindow() {
@@ -265,7 +290,7 @@ public class MainController implements Initializable {
         titleStage.showAndWait();
     }
 
-    private void showTemperatureWindow(Node node) {
+    private void showTemperatureWindow(Node node, int index) {
         temperatureController.setWeather(weatherCollection.getWeatherObservableList()
                 .get(children.indexOf(node)));
 
@@ -279,10 +304,10 @@ public class MainController implements Initializable {
         temperatureStage.showAndWait();
 
         if (temperatureController.isSubmitted())
-            weatherCollection.edit(temperatureController.getWeather());
+            editWeather(temperatureController.getWeather(), index);
     }
 
-    private void showWindWindow(Node node) {
+    private void showWindWindow(Node node, int index) {
         windController.setWeather(weatherCollection.getWeatherObservableList()
                 .get(children.indexOf(node)));
 
@@ -296,10 +321,10 @@ public class MainController implements Initializable {
         windStage.showAndWait();
 
         if (windController.isSubmitted())
-            weatherCollection.edit(windController.getWeather());
+            editWeather(windController.getWeather(), index);
     }
 
-    private void showPrecipitationWindow(Node node) {
+    private void showPrecipitationWindow(Node node, int index) {
         precipitationController.setWeather(weatherCollection.getWeatherObservableList()
                 .get(children.indexOf(node)));
 
@@ -313,18 +338,60 @@ public class MainController implements Initializable {
         precipitationStage.showAndWait();
 
         if (precipitationController.isSubmitted())
-            weatherCollection.edit(precipitationController.getWeather());
+            editWeather(precipitationController.getWeather(), index);
     }
 
-    private void setFinishedValue(Node node) {
+    private void showDatesWindow(List<String> dates) {
+        datesController.setDates(dates);
+
+        if (datesStage == null) {
+            datesStage = new Stage();
+            datesStage.setScene(new Scene(fxmlDates));
+            datesStage.setResizable(false);
+            datesStage.initModality(Modality.WINDOW_MODAL);
+            datesStage.initOwner(mainStage);
+        }
+        datesStage.showAndWait();
+    }
+
+    public void addWeather(Weather weather) {
+        if (!showFinished && weather.finished)
+            weatherCollection.add(weather);
+        else {
+            Node node = createChild(weatherCollection.add(weather));
+            children.add(node);
+            flowPane.getChildren().add(node);
+        }
+    }
+
+    public void editWeather(Weather weather, int index) {
+        if (!showFinished && weather.finished) {
+            weatherCollection.edit(weather);
+            children.remove(index);
+            flowPane.getChildren().remove(index);
+        } else {
+            Node node = createChild(weatherCollection.edit(weather));
+            children.set(index, node);
+            flowPane.getChildren().set(index, node);
+        }
+    }
+
+    public void deleteWeather(Weather weather, int index) {
+        weatherCollection.delete(weather);
+        children.remove(index);
+        flowPane.getChildren().remove(index);
+    }
+
+    private void setFinishedValue(Node node, int index) {
         Weather weather = weatherCollection.getWeatherObservableList()
                 .get(children.indexOf(node));
         weather.finished = !weather.finished;
-        weatherCollection.edit(weather);
+
+        editWeather(weather, index);
     }
 
     public void onFinishedChecked(ActionEvent actionEvent) {
         showFinished = !chckbxFinished.isSelected();
-        fillData();
+        init();
     }
 }
