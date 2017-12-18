@@ -1,8 +1,8 @@
 package com.ero.cweather.weather.weatherlibrary.datamodel;
 
-import java.io.Serializable;
-
 import com.google.gson.annotations.SerializedName;
+
+import java.io.Serializable;
 
 public class Current implements Serializable{
 	

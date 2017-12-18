@@ -11,6 +11,11 @@ public class Weather {
     public Integer duration;
     public String objectId;
 
+    public Weather() {
+        temp = -60.0;
+        wind_speed = -1.0;
+    }
+
     @Override
     public String toString() {
         return "Weather{" +
