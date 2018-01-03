@@ -9,6 +9,7 @@ public class Weather {
     public Boolean snowing;
     public Boolean finished;
     public Integer duration;
+    public String tag;
     public String objectId;
 
     public Weather() {
@@ -27,6 +28,7 @@ public class Weather {
                 ", snowing=" + snowing +
                 ", finished=" + finished +
                 ", duration=" + duration +
+                ", tag=" + tag +
                 ", objectId='" + objectId + '\'' +
                 '}';
     }
