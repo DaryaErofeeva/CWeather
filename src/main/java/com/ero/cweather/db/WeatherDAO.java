@@ -1,6 +1,7 @@
 package com.ero.cweather.db;
 
 import com.backendless.Backendless;
+import com.backendless.persistence.DataQueryBuilder;
 import com.ero.cweather.models.Weather;
 
 import java.util.List;
@@ -19,9 +20,13 @@ public class WeatherDAO {
         return Backendless.Persistence.of(Weather.class).save(weather);
     }
 
-    public static List<Weather> selectAll() {
+    public static List<Weather> selectAll(String tag) {
         Backendless.initApp(APPLICATION_ID, SECRET_KEY);
-        return Backendless.Persistence.of(Weather.class).find();
+
+        DataQueryBuilder dataQueryBuilder=DataQueryBuilder.create();
+        dataQueryBuilder.setWhereClause("tag LIKE '" + tag + "'");
+
+        return Backendless.Persistence.of(Weather.class).find(dataQueryBuilder);
     }
 
     public static void drop(Weather weather) {

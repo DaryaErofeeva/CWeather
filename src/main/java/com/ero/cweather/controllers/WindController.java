@@ -5,10 +5,14 @@ import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXSlider;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.stage.Stage;
 
-public class WindController {
+import java.net.URL;
+import java.util.ResourceBundle;
+
+public class WindController implements Initializable {
     @FXML
     public JFXSlider sldrWind;
 
@@ -51,5 +55,11 @@ public class WindController {
 
     public void onNullChecked(ActionEvent actionEvent) {
         weather.wind_speed = -1.0;
+    }
+
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        sldrWind.valueProperty().addListener((observable, oldValue, newValue) -> chckbxNull.setSelected(false));
     }
 }

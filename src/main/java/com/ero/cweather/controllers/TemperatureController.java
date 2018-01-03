@@ -3,12 +3,18 @@ package com.ero.cweather.controllers;
 import com.ero.cweather.models.Weather;
 import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXSlider;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.stage.Stage;
 
-public class TemperatureController {
+import java.net.URL;
+import java.util.ResourceBundle;
+
+public class TemperatureController implements Initializable {
     @FXML
     public JFXSlider sldrTemperature;
 
@@ -51,5 +57,10 @@ public class TemperatureController {
 
     public void onNullChecked(ActionEvent actionEvent) {
         weather.temp = -60.0;
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        sldrTemperature.valueProperty().addListener((observable, oldValue, newValue) -> chckbxNull.setSelected(false));
     }
 }

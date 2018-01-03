@@ -36,8 +36,14 @@ public class WeatherCollection {
         return weatherObservableList;
     }
 
-    public void fillWeatherList() {
+    public Weather getWeather(String title) {
+        for (Weather weather : weatherObservableList)
+            if (weather.title.equals(title)) return weather;
+        return new Weather();
+    }
+
+    public void fillWeatherList(String tag) {
         weatherObservableList.clear();
-        weatherObservableList.addAll(WeatherDAO.selectAll());
+        weatherObservableList.addAll(WeatherDAO.selectAll(tag));
     }
 }

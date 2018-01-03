@@ -5,6 +5,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class Main extends Application {
@@ -18,8 +19,9 @@ public class Main extends Application {
         mainController.setMainStage(stage);
 
         stage.setMinHeight(340);
-        stage.setMinWidth(320);
+        stage.setMinWidth(500);
         stage.setTitle("CWeather");
+        stage.getIcons().add(new Image("images/logo.png"));
 
 
         stage.setScene(new Scene(fxmlMain));
