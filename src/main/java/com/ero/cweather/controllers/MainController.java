@@ -3,8 +3,11 @@ package com.ero.cweather.controllers;
 import com.ero.cweather.db.collections.WeatherCollection;
 import com.ero.cweather.models.Weather;
 import com.ero.cweather.weather.WeatherSearcher;
-import com.jfoenix.controls.JFXCheckBox;
+import com.jfoenix.controls.*;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -17,11 +20,13 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -33,10 +38,16 @@ import java.util.ResourceBundle;
 
 public class MainController implements Initializable {
     @FXML
-    FlowPane flowPane;
+    private StackPane root;
 
     @FXML
-    private JFXCheckBox chckbxFinished;
+    private FlowPane flowPane;
+
+    @FXML
+    private JFXToggleButton tglbtnFinished;
+
+    @FXML
+    private JFXTextField txtfldTag;
 
     private ArrayList<Node> children;
 
@@ -86,8 +97,13 @@ public class MainController implements Initializable {
         weatherCollection = new WeatherCollection();
 
         showFinished = true;
-        fillData();
-        init();
+
+        txtfldTag.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (oldValue && txtfldTag.getText().length() > 0) {
+                fillData();
+                init();
+            }
+        });
     }
 
     private void initLoader() {
@@ -117,8 +133,8 @@ public class MainController implements Initializable {
 
     }
 
-    private static void fillData() {
-        weatherCollection.fillWeatherList();
+    private void fillData() {
+        weatherCollection.fillWeatherList(txtfldTag.getText());
     }
 
 
@@ -174,34 +190,46 @@ public class MainController implements Initializable {
         child.getChildren().addAll(header, footer);
 
         child.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 2 && dates.size() > 3) showDatesWindow(dates);
+            if (event.getClickCount() == 2 && dates.size() > 3) showDatesWindow(weather, headerColor);
         });
 
-        setContextMenu(child, weather.finished);
+        setContextMenu(child, weather.finished, weather.title);
+
+        child.setOnMouseEntered(event -> {
+            header.setStyle("-fx-background-color: white");
+            header.getChildren().forEach(node -> node.setStyle("-fx-text-fill: " + headerColor));
+            footer.setStyle("-fx-background-color: " + headerColor);
+            footer.getChildren().forEach(node -> node.setStyle("-fx-text-fill: white"));
+        });
+
+        child.setOnMouseExited(event -> {
+            footer.setStyle("-fx-background-color: white");
+            footer.getChildren().forEach(node -> node.setStyle("-fx-text-fill: " + headerColor));
+            header.setStyle("-fx-background-color: " + headerColor);
+            header.getChildren().forEach(node -> node.setStyle("-fx-text-fill: white"));
+        });
+
         return child;
     }
 
-    private void setContextMenu(Node node, boolean isFinished) {
+    private void setContextMenu(Node node, boolean isFinished, String title) {
         MenuItem titleItem = new MenuItem("Имя задачи");
-        titleItem.setOnAction(event -> showTitleWindow(node, children.indexOf(node)));
+        titleItem.setOnAction(event -> showTitleWindow(title, children.indexOf(node)));
 
         MenuItem temperatureItem = new MenuItem("Температура");
-        temperatureItem.setOnAction(event -> showTemperatureWindow(node, children.indexOf(node)));
+        temperatureItem.setOnAction(event -> showTemperatureWindow(title, children.indexOf(node)));
 
         MenuItem windItem = new MenuItem("Скорость ветра");
-        windItem.setOnAction(event -> showWindWindow(node, children.indexOf(node)));
+        windItem.setOnAction(event -> showWindWindow(title, children.indexOf(node)));
 
         MenuItem precipitationItem = new MenuItem("Осадки");
-        precipitationItem.setOnAction(event -> showPrecipitationWindow(node, children.indexOf(node)));
+        precipitationItem.setOnAction(event -> showPrecipitationWindow(title, children.indexOf(node)));
 
         MenuItem finishItem = new MenuItem(isFinished ? "Открыть задачу" : "Закрыть задачу");
-        finishItem.setOnAction(event -> setFinishedValue(node, children.indexOf(node)));
+        finishItem.setOnAction(event -> setFinishedValue(title, children.indexOf(node)));
 
         MenuItem removeTask = new MenuItem("Удалить");
-        removeTask.setOnAction(event -> deleteWeather(
-                weatherCollection.getWeatherObservableList().get(children.indexOf(node)),
-                children.indexOf(node))
-        );
+        removeTask.setOnAction(event -> deleteWeather(weatherCollection.getWeather(title), children.indexOf(node)));
 
         ContextMenu contextMenu = new ContextMenu(
                 titleItem,
@@ -213,7 +241,7 @@ public class MainController implements Initializable {
                 removeTask
         );
 
-        node.setOnContextMenuRequested(event -> contextMenu.show(node, Side.TOP, 0, 175));
+        node.setOnContextMenuRequested(event -> contextMenu.show(node, event.getScreenX(), event.getScreenY()));
     }
 
     private String getDefaultColor(int i) {
@@ -265,23 +293,43 @@ public class MainController implements Initializable {
     }
 
     public void onAddButtonActionListener(ActionEvent actionEvent) {
-        titleController.setWeather(new Weather());
+        if (txtfldTag.getText().length() == 0) {
+            showDialog("Введите, пожалуйста, тег для добавления новой задачи!");
+            return;
+        }
+
+        Weather weather = new Weather();
+        weather.tag = txtfldTag.getText();
+        titleController.setWeather(weather);
         showTitleWindow();
         if (titleController.isSubmitted())
             addWeather(titleController.getWeather());
     }
 
-    private void showTitleWindow(Node node, int index) {
-        titleController.setWeather(weatherCollection.getWeatherObservableList()
-                .get(children.indexOf(node)));
+    private void showTitleWindow(String title, int index) {
+        titleController.setWeather(weatherCollection.getWeather(title));
         showTitleWindow();
         if (titleController.isSubmitted())
             editWeather(titleController.getWeather(), index);
     }
 
+    private void showDialog(String text) {
+        JFXDialogLayout content = new JFXDialogLayout();
+        content.setPrefWidth(150);
+        JFXDialog dialog = new JFXDialog(root, content, JFXDialog.DialogTransition.TOP);
+
+        content.setHeading(new Text("Ошибка"));
+        content.setBody(new Text(text));
+        JFXButton button = new JFXButton("OK");
+        button.setOnAction(event -> dialog.close());
+        content.setActions(button);
+        dialog.show();
+    }
+
     private void showTitleWindow() {
         if (titleStage == null) {
             titleStage = new Stage();
+            titleStage.setTitle("Название");
             titleStage.setScene(new Scene(fxmlTitle));
             titleStage.setResizable(false);
             titleStage.initModality(Modality.WINDOW_MODAL);
@@ -290,12 +338,12 @@ public class MainController implements Initializable {
         titleStage.showAndWait();
     }
 
-    private void showTemperatureWindow(Node node, int index) {
-        temperatureController.setWeather(weatherCollection.getWeatherObservableList()
-                .get(children.indexOf(node)));
+    private void showTemperatureWindow(String title, int index) {
+        temperatureController.setWeather(weatherCollection.getWeather(title));
 
         if (temperatureStage == null) {
             temperatureStage = new Stage();
+            temperatureStage.setTitle("Температура");
             temperatureStage.setScene(new Scene(fxmlTemperature));
             temperatureStage.setResizable(false);
             temperatureStage.initModality(Modality.WINDOW_MODAL);
@@ -307,12 +355,12 @@ public class MainController implements Initializable {
             editWeather(temperatureController.getWeather(), index);
     }
 
-    private void showWindWindow(Node node, int index) {
-        windController.setWeather(weatherCollection.getWeatherObservableList()
-                .get(children.indexOf(node)));
+    private void showWindWindow(String title, int index) {
+        windController.setWeather(weatherCollection.getWeather(title));
 
         if (windStage == null) {
             windStage = new Stage();
+            windStage.setTitle("Скорость ветра");
             windStage.setScene(new Scene(fxmlWind));
             windStage.setResizable(false);
             windStage.initModality(Modality.WINDOW_MODAL);
@@ -324,12 +372,12 @@ public class MainController implements Initializable {
             editWeather(windController.getWeather(), index);
     }
 
-    private void showPrecipitationWindow(Node node, int index) {
-        precipitationController.setWeather(weatherCollection.getWeatherObservableList()
-                .get(children.indexOf(node)));
+    private void showPrecipitationWindow(String title, int index) {
+        precipitationController.setWeather(weatherCollection.getWeather(title));
 
         if (precipitationStage == null) {
             precipitationStage = new Stage();
+            precipitationStage.setTitle("Осадки");
             precipitationStage.setScene(new Scene(fxmlPrecipitation));
             precipitationStage.setResizable(false);
             precipitationStage.initModality(Modality.WINDOW_MODAL);
@@ -341,20 +389,29 @@ public class MainController implements Initializable {
             editWeather(precipitationController.getWeather(), index);
     }
 
-    private void showDatesWindow(List<String> dates) {
-        datesController.setDates(dates);
+    private void showDatesWindow(Weather weather, String color) {
+        datesController.setDates(weather, color);
 
         if (datesStage == null) {
             datesStage = new Stage();
+            datesStage.setTitle("Даты");
             datesStage.setScene(new Scene(fxmlDates));
-            datesStage.setResizable(false);
+            datesStage.setResizable(true);
+            datesStage.setMinWidth(350);
+            datesStage.setMinHeight(160);
             datesStage.initModality(Modality.WINDOW_MODAL);
             datesStage.initOwner(mainStage);
         }
+
         datesStage.showAndWait();
     }
 
     public void addWeather(Weather weather) {
+        if (weatherCollection.getWeather(weather.title).title != null) {
+            showDialog("Задачи с таким название в данном теге уже существует!");
+            return;
+        }
+
         if (!showFinished && weather.finished)
             weatherCollection.add(weather);
         else {
@@ -382,16 +439,15 @@ public class MainController implements Initializable {
         flowPane.getChildren().remove(index);
     }
 
-    private void setFinishedValue(Node node, int index) {
-        Weather weather = weatherCollection.getWeatherObservableList()
-                .get(children.indexOf(node));
+    private void setFinishedValue(String title, int index) {
+        Weather weather = weatherCollection.getWeather(title);
         weather.finished = !weather.finished;
 
         editWeather(weather, index);
     }
 
     public void onFinishedChecked(ActionEvent actionEvent) {
-        showFinished = !chckbxFinished.isSelected();
+        showFinished = !tglbtnFinished.isSelected();
         init();
     }
 }
