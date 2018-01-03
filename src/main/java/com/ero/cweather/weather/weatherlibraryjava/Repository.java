@@ -29,7 +29,6 @@ public class Repository implements IRepository {
         // TODO Auto-generated method stub
         url = APIURL + RequestBuilder.PrepareRequest(MethodType.Forecast, key, getBy, value, ForecastOfDays);
 
-        System.out.println("url==========>" + url);
         WeatherModel tryWeatherModel = GetData(url);
 
         return tryWeatherModel;
@@ -41,7 +40,6 @@ public class Repository implements IRepository {
         // TODO Auto-generated method stub
         url = APIURL + RequestBuilder.PrepareRequestByLatLong(MethodType.Forecast, key, latitude, longitude, ForecastOfDays);
 
-        System.out.println("url==========>" + url);
         WeatherModel tryWeatherModel = GetData(url);
 
         return tryWeatherModel;
@@ -53,7 +51,6 @@ public class Repository implements IRepository {
 
         url = APIURL + RequestBuilder.PrepareRequestByAutoIP(MethodType.Forecast, key, ForecastOfDays);
 
-        System.out.println("url==========>" + url);
         WeatherModel tryWeatherModel = GetData(url);
 
         return tryWeatherModel;
@@ -69,7 +66,6 @@ public class Repository implements IRepository {
 
         url = APIURL + RequestBuilder.PrepareRequest(MethodType.Current, key, getBy, value);
 
-        System.out.println("url==========>" + url);
         WeatherModel tryWeatherModel = GetData(url);
 
         return tryWeatherModel;
@@ -82,7 +78,6 @@ public class Repository implements IRepository {
 
         url = APIURL + RequestBuilder.PrepareRequestByLatLong(MethodType.Current, key, latitude, longitude);
 
-        System.out.println("url==========>" + url);
         WeatherModel tryWeatherModel = GetData(url);
 
         return tryWeatherModel;
@@ -93,8 +88,6 @@ public class Repository implements IRepository {
         // TODO Auto-generated method stub
 
         url = APIURL + RequestBuilder.PrepareRequestByAutoIP(MethodType.Current, key);
-
-        System.out.println("url==========>" + url);
 
         WeatherModel tryWeatherModel = GetData(url);
 
